@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>scatter-image demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../scatter-image.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic scatter-image demo</h3>
+      <demo-snippet>
+        <template>
+          <scatter-image scatter-on-tap>
+              <img slot="image" src="./imgs/path.jpg"></img>
+          </scatter-image>
+        </template>
+      </demo-snippet>
+    </div>
+
+    <div class="vertical-section-container centered">
+        <h3>With composite-operation, no-background, and custom resolution</h3>
+        <demo-snippet>
+            <template>
+                <scatter-image scatter-on-tap no-background resolution="50" composite-operation="screen">
+                    <img slot="image" src="./imgs/train.jpg"></img>
+                </scatter-image>
+            </template>
+        </demo-snippet>
+    </div>
+
+    <div class="vertical-section-container centered">
+        <h3>Modifying the image size, scatter-distance and duration</h3>
+        <demo-snippet>
+            <template>
+                <scatter-image scatter-on-tap resolution="8" scatter-distance="500" duration="15000">
+                    <img style="width: 50%;" slot="image" src="./imgs/train.jpg"></img>
+                </scatter-image>
+            </template>
+        </demo-snippet>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,367 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="./easing-functions.html">
+
+
+<dom-module id="scatter-image">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            #container {
+                position: relative;
+            }
+        </style>
+
+        <div id="container">
+            <slot name="image"></slot>
+            <canvas id="drawHere"></canvas>
+        </div>
+    </template>
+
+    <script>
+        /**
+         * `scatter-image`
+         * Applies a rendering effect to an <img> tag that breaks the image into pieces, 
+         * scatters, and then reconsitutes them.
+         *
+         * This element has an `image` slot that will accept the first <img> tag found inside of it.
+         * It then loads the image on a canvas, chops it up and animates it back together. Once the animation
+         * is complete, the animation cycle is terminated and the canvas is removed from the DOM.
+         * 
+         * Has a variety of configuration attributes.
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ScatterImage extends Polymer.GestureEventListeners(Polymer.Element) {
+            static get is() {
+                return 'scatter-image';
+            }
+
+            static get properties() {
+                return {
+                    /**
+                    * Reflects the loading state of the image. True means the image is being loaded.
+                    */
+                    loading: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                        notify: true,
+                        readOnly: true
+                    },
+
+                    /**
+                    * Reflects the drawing state of the animation. True means the the animation is in progress.
+                    */
+                    drawing: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                        notify: true,
+                        readOnly: true
+                    },
+
+                    /**
+                     * Reflects if the drawing has completed
+                     */
+                    complete: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                        notify: true,
+                        readOnly: true
+                    },
+
+                    /**
+                    * Will clear the canvas on each tick of the animation, which removes the 
+                    * the trailing effect an animating piece will leave as it moves. This generally
+                    * allows the background to be more distinct during the animation
+                    */
+                    noTrails: {
+                        type: Boolean,
+                        value: false
+                    },
+
+                    /**
+                     * Hides the img tag during animation, removing the image as a background
+                     * during the animation.
+                     */
+                    noBackground: {
+                        type: Boolean,
+                        value: false
+                    },
+
+                    /**
+                     * Defines the composite operation the canvas should use to while rendering the
+                     * animation. If a compositeOperation is defined, animation trails are disabled.
+                     * For current valid values, @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+                     */
+                    compositeOperation: {
+                        type: String,
+                        value: null
+                    },
+
+                    /**
+                     * The size, in pixels, of the individual chunks of the image. The smaller the resolution
+                     * the more chunks there are. Adjust as necessary based on image size, performance considerations
+                     * and/or awesomeness
+                     **/
+                    resolution: {
+                        type: Number,
+                        value: 10
+                    },
+
+                    /**
+                     *  The time, in milliseconds, allotted for the animation to complete.
+                     */
+                    duration: {
+                        type: Number,
+                        value: 1000
+                    },
+
+                    /**
+                     * The maximum distance, in pixels, that an individual chunk will start
+                     * from it's destination
+                     */
+                    scatterDistance: {
+                        type: Number,
+                        value: 150
+                    },
+
+                    /**
+                     * Enables a tap on the image or canvas to start a new scatter effect.
+                     */
+                    scatterOnTap: {
+                        type: Boolean,
+                        value: false
+                    }
+                };
+            }
+
+            constructor(){
+                super();
+                this.chunks = [];
+                Polymer.Gestures.addListener(this, 'tap', e => this.__handleTap(e));
+            }
+
+            __handleTap(e) {
+                if( this.scatterOnTap ){
+                    this.scatter();
+                }
+            }
+
+            ready() {
+                super.ready();
+
+                this.img = this.querySelector('img');
+
+                if (this.img instanceof Image) {
+                    this._setLoading(true);
+                    if (this.img.naturalWidth !== 0) {
+                        this.__init();
+                    } else {
+                        this.img.addEventListener('load', () => {
+                            this.__init();
+                        });
+                    }
+                }
+            }
+
+            __init() {
+                this._setLoading(false);
+                
+                this.ctx = this.$.drawHere.getContext('2d');
+                this.rect = this.img.getBoundingClientRect();
+                this.$.drawHere.width = this.rect.width;
+                this.$.drawHere.height = this.rect.height;
+                this.$.drawHere.style.display = 'none';
+                this.scaleX = this.rect.width / this.img.naturalWidth;
+                this.scaleY = this.rect.height / this.img.naturalHeight;
+
+                this.__chop();
+                this.scatter();
+            }
+
+            __chop() {
+                const columns = Math.ceil(this.img.naturalWidth/this.resolution),
+                rows = Math.ceil(this.img.naturalHeight/this.resolution);
+
+                for( let i = 0; i < columns; i++ ){
+                    for( let j = 0; j < rows; j++ ){
+                        const chunk = new Chunk(
+                            i*this.resolution,
+                            j*this.resolution,
+                            1,
+                            this.resolution,
+                            this.resolution,
+                            0
+                        );
+                        this.chunks.push(chunk); 
+                    }
+                }
+            }
+
+            scatter() {
+                this.chunks.forEach( chunk => {
+                    chunk.z = random(-10, 10);
+                    chunk.angle = random(0, 360);
+                    chunk.offsetX = random(-this.scatterDistance, this.scatterDistance);
+                    chunk.offsetY = random(-this.scatterDistance, this.scatterDistance);
+                    chunk.goto(0, 0, 1, 0, random(this.duration/2, this.duration));
+                });
+
+                if( this.noBackground ){
+                    this.img.style.visibility = 'hidden';
+                }
+
+                this._setDrawing(true);
+                this._setComplete(false);
+                this.$.drawHere.style.display = 'block';
+                this.tickId = requestAnimationFrame( () => this.__draw() );
+            }
+
+            __draw() {                
+                this._setDrawing(false);
+
+                if( this.compositeOperation && this.compositeOperation != 'source-over'){
+                    this.ctx.clearRect(0,0,this.$.drawHere.width, this.$.drawHere.height);
+                    this.ctx.globalCompositeOperation  = this.compositeOperation;
+                } else if( this.noTrails ) {
+                    this.ctx.clearRect(0,0,this.$.drawHere.width, this.$.drawHere.height);
+                }
+
+                this.globalAlpha = 0.1;
+                this.chunks.forEach( chunk => {
+                    chunk.move();
+                    this.ctx.save();
+                    this.ctx.translate(
+                        (chunk.x + chunk.width/2) * this.scaleX, 
+                        (chunk.y + chunk.height/2) * this.scaleY
+                    );
+                    this.ctx.rotate( chunk.rad );
+                    this.ctx.drawImage(
+                        this.img, 
+                        chunk.x, 
+                        chunk.y, 
+                        chunk.width, 
+                        chunk.height, 
+                        (-chunk.width * chunk.z / 2 + chunk.offsetX) * this.scaleX, 
+                        (-chunk.height * chunk.z / 2 + chunk.offsetY) * this.scaleY, 
+                        chunk.width * this.scaleX * chunk.z, 
+                        chunk.height * this.scaleY * chunk.z
+                    );
+                    this.ctx.restore();
+                    if(chunk.isAnimating){
+                        this._setDrawing(true);
+                    }
+                });
+
+                if( this.drawing ){
+                    requestAnimationFrame( () => this.__draw() )
+                } else {
+                    cancelAnimationFrame( this.tickId );
+                    this.img.style.visibility = '';
+                    this.$.drawHere.style.display = 'none';
+                    this._setComplete(true);
+                }
+            }
+        }
+
+        
+        class Chunk {
+            constructor(x, y, z, width, height, angle = 0) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.width = width;
+                this.height = height;
+                this.angle = angle;
+                this.animations = {};
+            }
+
+            set angle( angle ) {
+                this.rad = angle * Math.PI/180;
+            }
+
+            goto(x, y, z, angle, duration = 0) {                
+                const now = Date.now();
+                this.animations.offsetX = {
+                    target: this,
+                    prop: 'offsetX',
+                    start: this.offsetX,
+                    end: x,
+                    started: now,
+                    complete: now + duration,
+                    easingFunc: Easing.outSin
+                };
+                this.animations.offsetY = {
+                    target: this,
+                    prop: 'offsetY',
+                    start: this.offsetY,
+                    end: y,
+                    started: now,
+                    complete: now + duration,
+                    easingFunc: Easing.outSin
+                };
+                this.animations.z = {
+                    target: this,
+                    prop: 'z',
+                    start: this.z,
+                    end: z,
+                    started: now,
+                    complete: now + duration,
+                    easingFunc: Easing.swingTo
+                };
+                this.animations.rad = {
+                    target: this,
+                    prop: 'rad',
+                    start: this.rad,
+                    end: angle * Math.PI/180,
+                    started: now,
+                    complete: now + duration,
+                    easingFunc: Easing.swingTo
+                };
+            }
+
+            move() {
+                const now = Date.now();
+                for (var el in this.animations) {
+                    const anim = this.animations[el];
+                    if (now >= anim.complete) {
+                        anim.progress = 1;
+                        anim.target[anim.prop] = anim.end;
+                    } else {
+                        anim.progress = (now - anim.started) / (anim.complete - anim.started);
+                        anim.target[anim.prop] = anim.start + (anim.end - anim.start) * anim.easingFunc(anim.progress);
+                    }
+                }
+            }
+
+            get isAnimating() {
+                const now = Date.now();
+                for(let el in this.animations) {
+                    if( this.animations[el].complete > now ) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        function random( min, max ) {
+            return min + Math.random() * ( max - min );
+        }
+        window.customElements.define(ScatterImage.is, ScatterImage);
+    </script>
+</dom-module>

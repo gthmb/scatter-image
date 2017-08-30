@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>scatter-image test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../scatter-image.html">
+  </head>
+  <body>
+
+    <test-fixture id="BasicTestFixture">
+      <template>
+        <scatter-image>
+            <img src="./imgs/path.jpg"></img>
+        </scatter-image>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('scatter-image', function() {
+
+        /**
+         * not sure how to test this element :(
+         **/
+        test('instantiating the element with default properties works', function () {
+            var element = fixture('BasicTestFixture');
+            var elementShadowRoot = element.shadowRoot;
+            var canvas = elementShadowRoot.querySelector('canvas');
+
+            assert.equal(canvas.id, 'drawHere');
+            assert.equal(element.getAttribute('loading'), false);
+            assert.equal(element.hasAttribute('drawing'), false);
+          });
+      });
+    </script>
+    
+  </body>
+</html>

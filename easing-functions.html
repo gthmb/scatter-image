@@ -1,0 +1,33 @@
+<script>
+    /*!
+    * Equations borrowed with love from: https://github.com/jeremyckahn/shifty/blob/master/src/easing-functions.js
+    *;/
+
+    /*!
+    * All equations are adapted from Thomas Fuchs'
+    * [Scripty2](https://github.com/madrobby/scripty2/blob/master/src/effects/transitions/penner.js).
+    *
+    * Based on Easing Equations (c) 2003 [Robert
+    * Penner](http://www.robertpenner.com/), all rights reserved. This work is
+    * [subject to terms](http://www.robertpenner.com/easing_terms_of_use.html).
+    */
+
+    /*!
+    *  TERMS OF USE - EASING EQUATIONS
+    *  Open source under the BSD License.
+    *  Easing Equations (c) 2003 Robert Penner, all rights reserved.
+    */
+
+    class EasingFunctions {
+        swingTo (pos) {
+            const s = 1.70158;
+            return (pos -= 1) * pos * ((s + 1) * pos + s) + 1;
+        }
+
+        outSin(pos) {
+            return Math.sin(pos * (Math.PI / 2))
+        }
+    }
+
+    const Easing = new EasingFunctions();
+</script>

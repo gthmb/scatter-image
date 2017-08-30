@@ -42,6 +42,24 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 </scatter-image>
 ```
 
+## Alt fancy
+<!--
+```
+<custom-element-demo>
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="scatter-image.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
+```
+-->
+```html
+<scatter-image scatter-on-tap resolution="8" scatter-distance="500" duration="15000">
+    <img style="width: 50%;" slot="image" src="./demo/imgs/train.jpg">
+</scatter-image>
+```
+
 ### Configuration Attributes
 | Attribute | Description | Type | Default | 
 | --------- | ----------- | ---- | ------- | 

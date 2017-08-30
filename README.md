@@ -2,7 +2,7 @@
 
 # \<scatter-image\>
 
-Applies a rendering effect to an <img> tag that breaks the image into pieces, scatters, and then reconsitutes them.
+Applies a rendering effect to an `<img>` tag that breaks the image into pieces, scatters, and then reconsitutes them. The `<img>` tag goes in the `image` slot.
 
 ## Default usage
 <!--

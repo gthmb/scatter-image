@@ -7,11 +7,13 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 ## Default usage
 <!--
 ```
-<template>
-<script src="../webcomponentsjs/webcomponents-lite.js"></script>
-<link rel="import" href="scatter-image.html">
-<next-code-block></next-code-block>
-</template>
+<custom-element-demo>
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="scatter-image.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
 ```
 -->
 ```html
@@ -23,11 +25,13 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 ## Getting fancy
 <!--
 ```
-<template>
-<script src="../webcomponentsjs/webcomponents-lite.js"></script>
-<link rel="import" href="scatter-image.html">
-<next-code-block></next-code-block>
-</template>
+<custom-element-demo>
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="scatter-image.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
 ```
 -->
 ```html

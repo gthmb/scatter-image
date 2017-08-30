@@ -4,6 +4,8 @@
 
 Applies a rendering effect to an `<img>` tag that breaks the image into pieces, scatters, and then reconsitutes them. The `<img>` tag goes in the `image` slot.
 
+[Demo](https://www.webcomponents.org/element/gthmb/scatter-image/demo/demo/index.html)
+
 ## Default usage
 <!--
 ```

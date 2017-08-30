@@ -182,12 +182,11 @@
                 this._setLoading(false);
                 
                 this.ctx = this.$.drawHere.getContext('2d');
-                this.rect = this.img.getBoundingClientRect();
-                this.$.drawHere.width = this.rect.width;
-                this.$.drawHere.height = this.rect.height;
+                this.$.drawHere.width = this.img.offsetWidth;
+                this.$.drawHere.height = this.img.offsetHeight;
                 this.$.drawHere.style.display = 'none';
-                this.scaleX = this.rect.width / this.img.naturalWidth;
-                this.scaleY = this.rect.height / this.img.naturalHeight;
+                this.scaleX = this.img.offsetWidth / this.img.naturalWidth;
+                this.scaleY = this.img.offsetHeight / this.img.naturalHeight;
 
                 this.__chop();
                 this.scatter();

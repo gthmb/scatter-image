@@ -17,7 +17,7 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 ```
 -->
 ```html
-<scatter-image>
+<scatter-image scatter-on-tap>
     <img slot="image" src="./demo/imgs/path.jpg">
 </scatter-image>
 ```

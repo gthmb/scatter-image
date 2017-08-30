@@ -10,15 +10,13 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 <template>
 <script src="../webcomponentsjs/webcomponents-lite.js"></script>
 <link rel="import" href="scatter-image.html">
-<scatter-image>
-    <img slot="image" src="./demo/imgs/path.jpg"></img>
-</scatter-image>
+<next-code-block></next-code-block>
 </template>
 ```
 -->
 ```html
 <scatter-image>
-    <img slot="image" src="./demo/imgs/path.jpg"></img>
+    <img slot="image" src="./demo/imgs/path.jpg">
 </scatter-image>
 ```
 
@@ -28,15 +26,13 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 <template>
 <script src="../webcomponentsjs/webcomponents-lite.js"></script>
 <link rel="import" href="scatter-image.html">
-<scatter-image scatter-on-tap no-background resolution="50" composite-operation="screen">
-    <img slot="image" src="./demo/imgs/train.jpg"></img>
-</scatter-image>
+<next-code-block></next-code-block>
 </template>
 ```
 -->
 ```html
 <scatter-image scatter-on-tap no-background resolution="50" composite-operation="screen">
-    <img slot="image" src="./demo/imgs/train.jpg"></img>
+    <img slot="image" src="./demo/imgs/train.jpg">
 </scatter-image>
 ```
 

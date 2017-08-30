@@ -23,7 +23,7 @@
 
         <div id="container">
             <slot name="image"></slot>
-            <canvas id="drawHere"></canvas>
+            <canvas id="drawHere" width="0" height="0"></canvas>
         </div>
     </template>
 
@@ -165,6 +165,7 @@
                 super.ready();
 
                 this.img = this.querySelector('img');
+                this.ctx = this.$.drawHere.getContext('2d');
 
                 if (this.img instanceof Image) {
                     this._setLoading(true);
@@ -176,12 +177,33 @@
                         });
                     }
                 }
+
+                try {
+                    this.mutationObserver = new MutationObserver( (mutations) => {
+                        mutations.forEach( (mutation) => {
+                            if( this.$.drawHere.width !== this.img.offsetWidth && this.$.drawHere.height !== this.img.offsetHeight ){
+                                this.resizeCanvas();
+                            }
+                        });
+                    });    
+                } catch( err ) {
+                    console.log('MutationObserver is not available')
+                    this.mutationObserver = { observe(){} };
+                }
+                
             }
 
             __init() {
                 this._setLoading(false);
                 
-                this.ctx = this.$.drawHere.getContext('2d');
+                if( this.img.offsetWidth === 0 && this.img.offsetHeight === 0 ) {
+                    this.mutationObserver.observe(this, { attributes: true });
+                } else {
+                    this.resizeCanvas();
+                }      
+            }
+
+            resizeCanvas(){
                 this.$.drawHere.width = this.img.offsetWidth;
                 this.$.drawHere.height = this.img.offsetHeight;
                 this.$.drawHere.style.display = 'none';

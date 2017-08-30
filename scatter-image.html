@@ -167,6 +167,19 @@
                 this.img = this.querySelector('img');
                 this.ctx = this.$.drawHere.getContext('2d');
 
+                try {
+                    this.mutationObserver = new MutationObserver( (mutations) => {
+                        mutations.forEach( (mutation) => {
+                            if( this.$.drawHere.width !== this.img.offsetWidth && this.$.drawHere.height !== this.img.offsetHeight ){
+                                this.resizeCanvas();
+                            }
+                        });
+                    });    
+                } catch( err ) {
+                    this.mutationObserver = { observe(){} };
+                    console.log('MutationObserver is not available');
+                }
+
                 if (this.img instanceof Image) {
                     this._setLoading(true);
                     if (this.img.naturalWidth !== 0) {
@@ -177,20 +190,6 @@
                         });
                     }
                 }
-
-                try {
-                    this.mutationObserver = new MutationObserver( (mutations) => {
-                        mutations.forEach( (mutation) => {
-                            if( this.$.drawHere.width !== this.img.offsetWidth && this.$.drawHere.height !== this.img.offsetHeight ){
-                                this.resizeCanvas();
-                            }
-                        });
-                    });    
-                } catch( err ) {
-                    console.log('MutationObserver is not available')
-                    this.mutationObserver = { observe(){} };
-                }
-                
             }
 
             __init() {

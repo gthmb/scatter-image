@@ -4,7 +4,7 @@
   "main": "scatter-image.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "resize-aware": "#1.9.1"
+    "resize-aware": "https://github.com/gthmb/resize-aware.git#v2.0.alpha"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

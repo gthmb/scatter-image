@@ -10,6 +10,13 @@
     <script src="../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="../scatter-image.html">
+
+    <style>
+        test-fixture {
+            height: 100vh;
+            display: block;
+        }
+    </style>
   </head>
   <body>
 
@@ -24,10 +31,19 @@
     <script>
       suite('scatter-image', function() {
 
-        /**
-         * not sure how to test this element :(
-         **/
-        test('instantiating the element with default properties works', function () {
+        setup(function () {
+            stub('scatter-image', {
+                __resizeCanvas: function () {
+                    const img = this.querySelector('img');
+                    this.$.drawHere.width = img.naturalWidth;
+                    this.$.drawHere.height = img.naturalHeight;
+                    this.scaleX = 1;
+                    this.scaleY = 1;
+                }
+            });
+        });
+
+        test('instantiating the element with default properties works', function (done) {
             var element = fixture('BasicTestFixture');
             var elementShadowRoot = element.shadowRoot;
             var canvas = elementShadowRoot.querySelector('canvas');
@@ -35,6 +51,30 @@
             assert.equal(canvas.id, 'drawHere');
             assert.equal(element.getAttribute('loading'), false);
             assert.equal(element.hasAttribute('drawing'), false);
+            assert.equal(element.hasAttribute('complete'), false);
+
+            element.addEventListener('loading-changed', () => {
+                assert.equal(element.hasAttribute('loading'), false);
+            });
+
+            element.addEventListener('complete-changed', () => {
+                assert.equal(element.hasAttribute('complete'), true);
+            });
+
+            setTimeout(() => {
+                const img = element.querySelector('img');
+                assert.equal(element.hasAttribute('drawing'), true);
+                assert.equal(element.$.drawHere.width, img.naturalWidth);
+                assert.equal(element.$.drawHere.width, img.naturalHeight);
+            }, 100);
+
+            setTimeout(() => {
+                assert.equal(element.hasAttribute('drawing'), false);
+            }, 1100);
+
+            setTimeout(() => {
+                done();
+            }, 1500);
           });
       });
     </script>

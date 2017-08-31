@@ -1,8 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../resize-aware/resize-aware.html">
 <link rel="import" href="./easing-functions.html">
-<link rel="import" href="./resize-aware.html">
-
 
 <dom-module id="scatter-image">
     <template>
@@ -198,7 +197,7 @@
                 if (!this.img) {
                     return;
                 }
-                
+
                 this.$.drawHere.width = this.img.offsetWidth;
                 this.$.drawHere.height = this.img.offsetHeight;
                 this.scaleX = this.img.offsetWidth / this.img.naturalWidth;

@@ -55,7 +55,7 @@ Applies a rendering effect to an `<img>` tag that breaks the image into pieces, 
 ```
 -->
 ```html
-<scatter-image scatter-on-tap resolution="8" scatter-distance="500" duration="15000">
+<scatter-image scatter-on-tap resolution="20" scatter-distance="500" duration="15000">
     <img style="width: 50%;" slot="image" src="./demo/imgs/train.jpg">
 </scatter-image>
 ```
